@@ -1,0 +1,9 @@
+{
+	"users": {
+		"passwordMinCharacters": 6
+	},
+	"movies": {},
+	"server": {
+		"port": 3000
+	}
+}
