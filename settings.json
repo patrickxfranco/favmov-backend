@@ -3,10 +3,10 @@
 		"passwordMinCharacters": 6
 	},
 	"movies": {
-		"titleRequired": true, 					// Option not implemented
-		"coverRequired": true, 					// Option not implemented
-		"descriptionRequired": true, 		// Option not implemented
-		"playerAdressRequired": true 		// Option not implemented
+		"titleRequired": true,
+		"coverRequired": true,
+		"descriptionRequired": true,
+		"playerAdressRequired": true
 	},
 	"server": {
 		"port": 3000
