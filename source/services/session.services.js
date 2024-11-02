@@ -14,7 +14,11 @@ class Session {
 		}
 
 		// Selects from the database the user who has the email entered in the parameter
-		const userWithThisEmail = await knex.select("*").from("users").where({ email }).first();
+		const userWithThisEmail = await knex
+			.select("*")
+			.from("users")
+			.where({ email: String(email).toLocaleLowerCase() })
+			.first();
 
 		// If the user doesn't exist, returns an error
 		if (!userWithThisEmail) {

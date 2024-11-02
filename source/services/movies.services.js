@@ -1,3 +1,5 @@
+import { capitalizeAllWords, capitalizeString } from "../utils/string.handle.js";
+import { returnValidValue } from "../utils/data.handle.js";
 import knex from "../database/knex/index.js";
 
 class MoviesServices {
@@ -35,16 +37,25 @@ class MoviesServices {
 		}
 
 		// Checks if all fields have been completed
-		if (!title || !cover || !description || !player_adress) {
+		if (
+			!title ||
+			title === "" ||
+			!cover ||
+			cover === "" ||
+			!description ||
+			description === "" ||
+			!player_adress ||
+			player_adress === ""
+		) {
 			return response.status(400).json({ error: "Missing required fields" });
 		}
 
 		// Insert the movie into the database
 		await knex("movies").insert({
 			user_id,
-			title,
+			title: capitalizeAllWords(title),
 			cover,
-			description,
+			description: capitalizeString(description),
 			player_adress,
 		});
 
@@ -64,7 +75,7 @@ class MoviesServices {
 		}
 
 		// Selects the ID, USER_ID, TITLE, COVER, DESCRIPTION, PLAYER_ADRESS, CREATED_AT and UPDATED_AT columns from the MOVIES table
-		const movie = await knex.select("*").from("movies").where({ user_id, movie_id }).first();
+		const movie = await knex.select("*").from("movies").where({ user_id, id: movie_id }).first();
 
 		// If the movie doesn't exist, returns an error
 		if (!movie) {
@@ -76,7 +87,7 @@ class MoviesServices {
 	}
 
 	async update(request, response) {
-		const { title, cover, description, player_adress } = request.body;
+		const { newTitle, newCover, newDescription, newPlayer_adress } = request.body;
 		const movie_id = request.params.id;
 		const user_id = request.id;
 
@@ -91,7 +102,7 @@ class MoviesServices {
 		const movie = await knex
 			.select("id", "title", "cover", "description", "player_adress")
 			.from("movies")
-			.where({ user_id, movie_id })
+			.where({ user_id, id: movie_id })
 			.first();
 
 		// If the movie doesn't exist, returns an error
@@ -99,19 +110,14 @@ class MoviesServices {
 			return response.status(400).json({ error: "Movie not found" });
 		}
 
-		// Checks if all fields have been completed
-		if (!title || !cover || !description || !player_adress) {
-			return response.status(400).json({ error: "Missing required fields" });
-		}
-
-		// Updates the movie in the database
+		// Update the movie into the database
 		await knex("movies")
 			.where({ id: movie.id })
 			.update({
-				title: title ?? movie.title,
-				cover: cover ?? movie.cover,
-				description: description ?? movie.description,
-				player_adress: player_adress ?? movie.player_adress,
+				title: returnValidValue(capitalizeAllWords(newTitle), movie.title),
+				cover: returnValidValue(newCover, movie.cover),
+				description: returnValidValue(capitalizeString(newDescription), movie.description),
+				player_adress: returnValidValue(newPlayer_adress, movie.player_adress),
 				updated_at: knex.fn.now(),
 			});
 
@@ -131,7 +137,7 @@ class MoviesServices {
 		}
 
 		// Selects the ID, USER_ID, TITLE, COVER, DESCRIPTION, PLAYER_ADRESS, CREATED_AT and UPDATED_AT columns from the MOVIES table
-		const movie = await knex.select("id").from("movies").where({ user_id, movie_id }).first();
+		const movie = await knex.select("id").from("movies").where({ user_id, id: movie_id }).first();
 
 		// If the movie doesn't exist, returns an error
 		if (!movie) {

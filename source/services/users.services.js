@@ -1,4 +1,6 @@
 import settings from "../../settings.json" assert { type: "json" };
+import { capitalizeAllWords } from "../utils/string.handle.js";
+import { returnValidValue } from "../utils/data.handle.js";
 import knex from "../database/knex/index.js";
 import { hash, compare } from "bcrypt";
 
@@ -31,7 +33,7 @@ class UserServices {
 		const hashedPassword = await hash(password, 8);
 
 		// Insert the user into the database
-		await knex("users").insert({ name, email, password: hashedPassword });
+		await knex("users").insert({ name: capitalizeAllWords(name), email: String(email).toLowerCase(), password: hashedPassword });
 
 		// Returns a success message
 		return response.status(201).json({ message: "User created" });
@@ -109,9 +111,9 @@ class UserServices {
 		await knex("users")
 			.where({ id: currentUser.id })
 			.update({
-				name: newName ?? currentUser.name,
-				email: newEmail ?? currentUser.email,
-				password: hashedPassword ?? currentUser.password,
+				name: returnValidValue(capitalizeAllWords(newName), currentUser.name),
+				email: returnValidValue(String(newEmail).toLocaleLowerCase(), currentUser.email),
+				password: returnValidValue(hashedPassword, currentUser.password),
 				updated_at: knex.fn.now(),
 			});
 
