@@ -20,7 +20,7 @@ class UserServices {
 			return response.status(400).json({ error: "User already exists" });
 		}
 
-		// Checks if the password has at least 6 characters
+		// Checks if the password has the minimum number of characters
 		if (password.length < settings.users.passwordMinCharacters) {
 			return response.status(400).json({
 				error: `Password must have at least ${settings.users.passwordMinCharacters} characters`,
@@ -30,11 +30,6 @@ class UserServices {
 		// Hashes the password
 		const hashedPassword = await hash(password, 8);
 
-		// Checks if the name is empty
-		if (!name || name === "") {
-			return response.status(400).json({ error: "Name is required" });
-		}
-
 		// Insert the user into the database
 		await knex("users").insert({ name, email, password: hashedPassword });
 
@@ -43,10 +38,14 @@ class UserServices {
 	}
 
 	async read(request, response) {
-		const id = request.id;
+		const user_id = request.id;
 
 		// Selects the ID, NAME, EMAIL, CREATED_AT and UPDATED_AT columns from the USERS table
-		const userWithThisId = await knex.select("id", "name", "email", "created_at", "updated_at").from("users").where({ id }).first();
+		const userWithThisId = await knex
+			.select("id", "name", "email", "created_at", "updated_at")
+			.from("users")
+			.where({ id: user_id })
+			.first();
 
 		// If the user doesn't exist, returns an error
 		if (!userWithThisId) {
@@ -59,10 +58,10 @@ class UserServices {
 
 	async update(request, response) {
 		const { newName, newEmail, currentPassword, newPassword } = request.body;
-		const id = request.id;
+		const user_id = request.id;
 
 		// Selects from the database the user who has the ID entered in the parameter
-		const currentUser = await knex.select("*").from("users").where({ id }).first();
+		const currentUser = await knex.select("*").from("users").where({ id: user_id }).first();
 
 		// Selects from the database the user who has the email entered in the parameter
 		const userWithNewEmail = await knex
@@ -90,7 +89,7 @@ class UserServices {
 		}
 
 		// Check if the current password is correct
-		if ((await compare(currentPassword, currentUser.password)) == false) {
+		if (!(await compare(currentPassword, currentUser.password))) {
 			return response.status(400).json({ error: "Invalid password" });
 		}
 
@@ -98,7 +97,6 @@ class UserServices {
 		if (newPassword) {
 			// Checks whether the new password meets the character requirement
 			if (newPassword.length < settings.users.passwordMinCharacters) {
-				// If it doesn't, returns an error
 				return response.status(400).json({
 					error: `Password must have at least ${settings.users.passwordMinCharacters} characters`,
 				});
@@ -122,11 +120,11 @@ class UserServices {
 	}
 
 	async delete(request, response) {
-		const { email, password } = request.body;
-		const id = request.id;
+		const { password } = request.body;
+		const user_id = request.id;
 
 		// Selects from the database the user who has the ID entered in the parameter
-		if (!id) {
+		if (!user_id) {
 			return response.status(400).json({ error: "User not logged" });
 		}
 
@@ -136,7 +134,7 @@ class UserServices {
 		}
 
 		// Selects from the database the user who has the ID entered in the parameter
-		const currentUser = await knex.select("*").from("users").where({ id }).first();
+		const currentUser = await knex.select("*").from("users").where({ id: user_id }).first();
 
 		// If the user doesn't exist, returns an error
 		if (!currentUser) {
@@ -149,12 +147,12 @@ class UserServices {
 		}
 
 		// Checks if the password is correct
-		if ((await compare(password, currentUser.password)) == false) {
+		if (!(await compare(password, currentUser.password))) {
 			return response.status(400).json({ error: "Invalid password" });
 		}
 
 		// Deletes the user from the database
-		await knex("users").where({ id }).del();
+		await knex("users").where({ id: currentUser.id }).del();
 
 		// Returns a success message
 		return response.status(200).json({ message: "User deleted" });

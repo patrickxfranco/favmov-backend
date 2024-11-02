@@ -7,6 +7,7 @@ import express from "express";
 import cors from "cors";
 
 exec("npx knex migrate:latest");
+
 const app = express();
 
 app.use(cors());
