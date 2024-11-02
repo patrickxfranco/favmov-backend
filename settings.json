@@ -2,7 +2,12 @@
 	"users": {
 		"passwordMinCharacters": 6
 	},
-	"movies": {},
+	"movies": {
+		"titleRequired": true, 					// Option not implemented
+		"coverRequired": true, 					// Option not implemented
+		"descriptionRequired": true, 		// Option not implemented
+		"playerAdressRequired": true 		// Option not implemented
+	},
 	"server": {
 		"port": 3000
 	}
