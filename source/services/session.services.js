@@ -1,6 +1,7 @@
 import knex from "../database/knex/index.js";
 import { compare } from "bcrypt";
 import pkg from "jsonwebtoken";
+
 const { sign } = pkg;
 
 class Session {
@@ -13,24 +14,16 @@ class Session {
 		}
 
 		// Selects from the database the user who has the email entered in the parameter
-		const userWithThisEmail = await knex
-			.select("*")
-			.from("users")
-			.where({ email })
-			.first();
+		const userWithThisEmail = await knex.select("*").from("users").where({ email }).first();
 
 		// If the user doesn't exist, returns an error
 		if (!userWithThisEmail) {
-			return response
-				.status(401)
-				.json({ error: "Incorrect email address and/or password" });
+			return response.status(401).json({ error: "Incorrect email address and/or password" });
 		}
 
 		// Checks if the password is correct
 		if (!(await compare(password, userWithThisEmail.password))) {
-			return response
-				.status(401)
-				.json({ error: "Incorrect email address and/or password" });
+			return response.status(401).json({ error: "Incorrect email address and/or password" });
 		}
 
 		// Creates the JWT token

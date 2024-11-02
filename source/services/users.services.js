@@ -7,24 +7,13 @@ class UserServices {
 		const { name, email, password } = request.body;
 
 		// Checks if all fields have been completed
-		if (
-			!name ||
-			name === "" ||
-			!email ||
-			email === "" ||
-			!password ||
-			password === ""
-		) {
+		if (!name || name === "" || !email || email === "" || !password || password === "") {
 			// If not, returns an error
 			return response.status(400).json({ error: "Missing required fields" });
 		}
 
 		// Checks if the user already exists
-		const userWithExistentEmail = await knex
-			.select("*")
-			.from("users")
-			.where({ email })
-			.first();
+		const userWithExistentEmail = await knex.select("*").from("users").where({ email }).first();
 
 		// If the user already exists, returns an error
 		if (userWithExistentEmail) {
@@ -57,11 +46,7 @@ class UserServices {
 		const id = request.id;
 
 		// Selects the ID, NAME, EMAIL, CREATED_AT and UPDATED_AT columns from the USERS table
-		const userWithThisId = await knex
-			.select("id", "name", "email", "created_at", "updated_at")
-			.from("users")
-			.where({ id })
-			.first();
+		const userWithThisId = await knex.select("id", "name", "email", "created_at", "updated_at").from("users").where({ id }).first();
 
 		// If the user doesn't exist, returns an error
 		if (!userWithThisId) {
@@ -77,11 +62,7 @@ class UserServices {
 		const id = request.id;
 
 		// Selects from the database the user who has the ID entered in the parameter
-		const currentUser = await knex
-			.select("*")
-			.from("users")
-			.where({ id })
-			.first();
+		const currentUser = await knex.select("*").from("users").where({ id }).first();
 
 		// Selects from the database the user who has the email entered in the parameter
 		const userWithNewEmail = await knex
@@ -105,9 +86,7 @@ class UserServices {
 
 		// Check if a current password has been entered
 		if (!currentPassword) {
-			return response
-				.status(400)
-				.json({ error: "Current password is required" });
+			return response.status(400).json({ error: "Current password is required" });
 		}
 
 		// Check if the current password is correct
@@ -157,11 +136,7 @@ class UserServices {
 		}
 
 		// Selects from the database the user who has the ID entered in the parameter
-		const currentUser = await knex
-			.select("*")
-			.from("users")
-			.where({ id })
-			.first();
+		const currentUser = await knex.select("*").from("users").where({ id }).first();
 
 		// If the user doesn't exist, returns an error
 		if (!currentUser) {
@@ -174,7 +149,7 @@ class UserServices {
 		}
 
 		// Checks if the password is correct
-		if (await compare(password, currentUser.password) == false) {
+		if ((await compare(password, currentUser.password)) == false) {
 			return response.status(400).json({ error: "Invalid password" });
 		}
 

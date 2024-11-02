@@ -5,11 +5,7 @@ class MoviesServices {
 		const user_id = request.id;
 
 		// Selects the ID, USER_ID, TITLE, COVER, DESCRIPTION, PLAYER_ADRESS, CREATED_AT and UPDATED_AT columns from the MOVIES table
-		const userWithThisId = await knex
-			.select("*")
-			.from("users")
-			.where({ id: user_id })
-			.first();
+		const userWithThisId = await knex.select("*").from("users").where({ id: user_id }).first();
 
 		// If the user doesn't exist, returns an error
 		if (!userWithThisId) {
@@ -18,15 +14,7 @@ class MoviesServices {
 
 		// Selects the ID, USER_ID, TITLE, COVER, DESCRIPTION, PLAYER_ADRESS, CREATED_AT and UPDATED_AT columns from the MOVIES table
 		const movies = await knex
-			.select(
-				"id",
-				"title",
-				"cover",
-				"description",
-				"player_adress",
-				"created_at",
-				"updated_at"
-			)
+			.select("id", "title", "cover", "description", "player_adress", "created_at", "updated_at")
 			.from("movies")
 			.where({ user_id: userWithThisId.id })
 			.orderBy("title", "asc");
@@ -39,11 +27,7 @@ class MoviesServices {
 		const user_id = request.id;
 		const { title, cover, description, player_adress } = request.body;
 
-		const userWithThisId = await knex
-			.select("*")
-			.from("users")
-			.where({ id: user_id })
-			.first();
+		const userWithThisId = await knex.select("*").from("users").where({ id: user_id }).first();
 
 		// If the user doesn't exist, returns an error
 		if (!userWithThisId) {
@@ -52,7 +36,6 @@ class MoviesServices {
 
 		// Checks if all fields have been completed
 		if (!title || !cover || !description || !player_adress) {
-			// If not, returns an error
 			return response.status(400).json({ error: "Missing required fields" });
 		}
 
@@ -70,14 +53,10 @@ class MoviesServices {
 	}
 
 	async read(request, response) {
+		const movie_id = request.params.id;
 		const user_id = request.id;
-		const { id } = request.params;
 
-		const userWithThisId = await knex
-			.select("*")
-			.from("users")
-			.where({ id: user_id })
-			.first();
+		const userWithThisId = await knex.select("*").from("users").where({ id: user_id }).first();
 
 		// If the user doesn't exist, returns an error
 		if (!userWithThisId) {
@@ -85,19 +64,7 @@ class MoviesServices {
 		}
 
 		// Selects the ID, USER_ID, TITLE, COVER, DESCRIPTION, PLAYER_ADRESS, CREATED_AT and UPDATED_AT columns from the MOVIES table
-		const movie = await knex
-			.select(
-				"id",
-				"title",
-				"cover",
-				"description",
-				"player_adress",
-				"created_at",
-				"updated_at"
-			)
-			.from("movies")
-			.where({ user_id, id })
-			.first();
+		const movie = await knex.select("*").from("movies").where({ user_id, movie_id }).first();
 
 		// If the movie doesn't exist, returns an error
 		if (!movie) {
@@ -109,15 +76,11 @@ class MoviesServices {
 	}
 
 	async update(request, response) {
-		const user_id = request.id;
-		const { id } = request.params;
 		const { title, cover, description, player_adress } = request.body;
+		const movie_id = request.params.id;
+		const user_id = request.id;
 
-		const userWithThisId = await knex
-			.select("*")
-			.from("users")
-			.where({ id: user_id })
-			.first();
+		const userWithThisId = await knex.select("*").from("users").where({ id: user_id }).first();
 
 		// If the user doesn't exist, returns an error
 		if (!userWithThisId) {
@@ -128,7 +91,7 @@ class MoviesServices {
 		const movie = await knex
 			.select("id", "title", "cover", "description", "player_adress")
 			.from("movies")
-			.where({ user_id, id })
+			.where({ user_id, movie_id })
 			.first();
 
 		// If the movie doesn't exist, returns an error
@@ -157,14 +120,10 @@ class MoviesServices {
 	}
 
 	async delete(request, response) {
+		const movie_id = request.params.id;
 		const user_id = request.id;
-		const { id } = request.params;
 
-		const userWithThisId = await knex
-			.select("*")
-			.from("users")
-			.where({ id: user_id })
-			.first();
+		const userWithThisId = await knex.select("*").from("users").where({ id: user_id }).first();
 
 		// If the user doesn't exist, returns an error
 		if (!userWithThisId) {
@@ -172,11 +131,7 @@ class MoviesServices {
 		}
 
 		// Selects the ID, USER_ID, TITLE, COVER, DESCRIPTION, PLAYER_ADRESS, CREATED_AT and UPDATED_AT columns from the MOVIES table
-		const movie = await knex
-			.select("id")
-			.from("movies")
-			.where({ user_id, id })
-			.first();
+		const movie = await knex.select("id").from("movies").where({ user_id, movie_id }).first();
 
 		// If the movie doesn't exist, returns an error
 		if (!movie) {
@@ -184,7 +139,7 @@ class MoviesServices {
 		}
 
 		// Deletes the movie from the database
-		await knex("movies").where({ user_id, id }).del();
+		await knex("movies").where({ user_id, movie_id }).del();
 
 		// Returns a success message
 		return response.status(200).json({ message: "Movie deleted" });

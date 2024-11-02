@@ -1,6 +1,6 @@
-import { Router } from "express";
-import MoviesServices from "../services/movies.services.js";
 import checkAuthentication from "../middleware/checkAuthentication.js";
+import MoviesServices from "../services/movies.services.js";
+import { Router } from "express";
 
 const movieRoutes = Router();
 const moviesServices = new MoviesServices();

@@ -1,13 +1,13 @@
 import { Router } from "express";
 
+import sessionRoutes from "./session.routes.js";
 import movieRoutes from "./movies.routes.js";
 import userRoutes from "./users.routes.js";
-import sessionRoutes from "./session.routes.js";
 
 const routes = Router();
 
+routes.use("/login", sessionRoutes);
 routes.use("/movies", movieRoutes);
 routes.use("/user", userRoutes);
-routes.use("/login", sessionRoutes);
 
 export default routes;
