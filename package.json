@@ -4,7 +4,7 @@
 	"main": "index.js",
 	"type": "module",
 	"scripts": {
-		"start": "node --experimental-json-modules ./source/server.js",
+		"start": "npx knex migrate:latest &&node --experimental-json-modules ./source/server.js",
 		"dev": "nodemon ./source/server.js",
 		"migrate": "knex migrate:latest"
 	},
