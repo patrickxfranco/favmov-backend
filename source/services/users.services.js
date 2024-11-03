@@ -1,4 +1,4 @@
-import settings from "../../settings.json" assert { type: "json" };
+import settings from "../../settings.js";
 import { capitalizeAllWords } from "../utils/string.handle.js";
 import { returnValidValue } from "../utils/data.handle.js";
 import knex from "../database/knex/index.js";

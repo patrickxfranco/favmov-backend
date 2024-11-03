@@ -1,4 +1,4 @@
-{
+export default {
 	"users": {
 		"passwordMinCharacters": 6
 	},

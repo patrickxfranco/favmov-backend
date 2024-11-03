@@ -1,5 +1,5 @@
 import "dotenv/config";
-import settings from "../settings.json" assert { type: "json" };
+import settings from "../settings.js";
 import routes from "./routes/index.js";
 import { exec } from "child_process";
 import "express-async-errors";
