@@ -1,12 +1,12 @@
 import "dotenv/config";
 import settings from "../settings.js";
 import routes from "./routes/index.js";
-import { exec } from "child_process";
+// import { exec } from "child_process";
 import "express-async-errors";
 import express from "express";
 import cors from "cors";
 
-exec("npx knex migrate:latest");
+// exec("npx knex migrate:latest");
 
 const app = express();
 
